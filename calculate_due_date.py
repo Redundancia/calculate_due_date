@@ -1,3 +1,4 @@
+from calendar import THURSDAY
 from datetime import datetime, timedelta
 
 def calculate_due_date(submit_date, turnaround_time):
@@ -11,6 +12,11 @@ def calculate_due_date(submit_date, turnaround_time):
     A problem can only be reported during working hours.
     Returns: the date/time when the issue is resolved. 
     """
+    WORKING_HOURS_START = 9
+    WORKING_HOURS_END = 17
+    WORKDAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
+    WORKING_HOURS_PER_DAY = 8
+    
     # validate submite_date type
     if not isinstance(submit_date, datetime):
         raise ValueError("Submit date is not a valid input, try a datetime.datetime type.")
