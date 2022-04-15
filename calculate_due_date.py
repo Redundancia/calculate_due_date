@@ -1,7 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
-WORKING_HOURS_START = datetime(1,1,1,9,0).time()
-WORKING_HOURS_END = datetime(1,1,1,17,0).time()
+WORKING_HOURS_START = 9
+WORKING_HOURS_END = 17
 WORKING_HOURS_PER_DAY = 8
 DATETIME_FRIDAY_INTEGER = 4
 
@@ -29,17 +29,19 @@ def calculate_due_date(submit_date, turnaround_time):
         turnaround_time -= WORKING_HOURS_PER_DAY
 
     # we have less than a full workday left, calculate date
-    working_time_left_from_day = timedelta(hours=WORKING_HOURS_END.hour) - timedelta(hours=due_date.hour, minutes=due_date.minute, seconds=due_date.second)
+
+    # time left from workdays workhours
+    working_time_left_from_day = timedelta(hours=WORKING_HOURS_END) - timedelta(hours=due_date.hour, minutes=due_date.minute, seconds=due_date.second)
 
     # if due date hours are within day
     if working_time_left_from_day  > timedelta(hours=turnaround_time):
         due_date += timedelta(hours=turnaround_time)
     # if due_date overflows to next day
     else:
-        overflowing_work_time = timedelta(hours=turnaround_time) - (timedelta(hours=WORKING_HOURS_END.hour) - timedelta(hours=due_date.hour, minutes=due_date.minute, seconds=due_date.second))
-        due_date = datetime.combine(due_date.date(), WORKING_HOURS_START)
-        due_date += timedelta(days=1)
-        due_date += overflowing_work_time
+        # calculate total delta time, 1 day from overflow plus working hours left
+        delta_time = timedelta(days=1,hours=turnaround_time) - working_time_left_from_day
+        due_date = datetime.combine(due_date.date(), time(hour=WORKING_HOURS_START,minute=0))
+        due_date += delta_time
         due_date = skip_weekend_if_needed(due_date)
     return due_date
 
@@ -58,7 +60,7 @@ def validate_inputs(submit_date, turnaround_time):
         raise ValueError("Invalid submit date, try weekdays:Mon-Fri.")
 
     #validate submit date value for working hours
-    if submit_date.time() < WORKING_HOURS_START or submit_date.time() > WORKING_HOURS_END:
+    if submit_date.time() < time(hour=WORKING_HOURS_START, minute=0) or submit_date.time() > time(hour=WORKING_HOURS_END, minute=0):
         raise ValueError("Invalid submit date time, try working hours:9-17.")
 
 
