@@ -43,6 +43,7 @@ def calculate_due_date(submit_date, turnaround_time):
         due_date = datetime.combine(due_date.date(), time(hour=WORKING_HOURS_START,minute=0))
         due_date += delta_time
         due_date = skip_weekend_if_needed(due_date)
+    print(due_date)
     return due_date
 
 
@@ -64,11 +65,11 @@ def validate_inputs(submit_date, turnaround_time):
         raise ValueError("Invalid submit date time, try working hours:9-17.")
 
 
-def skip_weekend_if_needed(dueDate):
-    if dueDate.weekday() > DATETIME_FRIDAY_INTEGER:
-        dueDate = dueDate + timedelta(days=+2)
-    return dueDate
+def skip_weekend_if_needed(due_date):
+    if due_date.weekday() > DATETIME_FRIDAY_INTEGER:
+        due_date = due_date + timedelta(days=+2)
+    return due_date
 
 
 if __name__ == "__main__":
-    calculate_due_date(datetime(2022,4,13,17,0),7)
+    calculate_due_date(datetime(2022,4,29,16,0),15)
