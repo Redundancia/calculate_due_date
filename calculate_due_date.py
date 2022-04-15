@@ -1,5 +1,10 @@
 from datetime import datetime, timedelta
 
+WORKING_HOURS_START = datetime(1,1,1,9,0).time()
+WORKING_HOURS_END = datetime(1,1,1,17,0).time()
+WORKING_HOURS_PER_DAY = 8
+DATETIME_FRIDAY_INTEGER = 4
+
 def calculate_due_date(submit_date, turnaround_time):
     """
     Inputs: 
@@ -11,12 +16,8 @@ def calculate_due_date(submit_date, turnaround_time):
     A problem can only be reported during working hours.
     Returns: the date/time when the issue is resolved. 
     """
-    WORKING_HOURS_START = datetime(1,1,1,9,00).time()
-    WORKING_HOURS_END = datetime(1,1,1,17,00).time()
-    WORKING_HOURS_PER_DAY = 8
-    DATETIME_FRIDAY_INTEGER = 4
 
-    validate_inputs(submit_date, turnaround_time, WORKING_HOURS_START, WORKING_HOURS_END, DATETIME_FRIDAY_INTEGER)
+    validate_inputs(submit_date, turnaround_time)
 
     # setup return date variable
     due_date = submit_date
@@ -24,7 +25,7 @@ def calculate_due_date(submit_date, turnaround_time):
     # while at least a whole working day left, add 1 day to date, and skip weekends if needed
     while turnaround_time >= WORKING_HOURS_PER_DAY:
         due_date = due_date + timedelta(days=+1)
-        due_date = skip_weekend_if_needed(due_date, DATETIME_FRIDAY_INTEGER)
+        due_date = skip_weekend_if_needed(due_date)
         turnaround_time -= WORKING_HOURS_PER_DAY
 
     # we have less than a full workday left, calculate date
@@ -39,13 +40,11 @@ def calculate_due_date(submit_date, turnaround_time):
         due_date = datetime.combine(due_date.date(), WORKING_HOURS_START)
         due_date += timedelta(days=1)
         due_date += overflowing_work_time
-        due_date = skip_weekend_if_needed(due_date, DATETIME_FRIDAY_INTEGER)
+        due_date = skip_weekend_if_needed(due_date)
     return due_date
 
 
-
-
-def validate_inputs(submit_date, turnaround_time, WORKING_HOURS_START, WORKING_HOURS_END, DATETIME_FRIDAY_INTEGER):
+def validate_inputs(submit_date, turnaround_time):
     # validate submite_date type
     if not isinstance(submit_date, datetime):
         raise ValueError("Submit date is not a valid input, try a datetime.datetime type.")
@@ -63,7 +62,7 @@ def validate_inputs(submit_date, turnaround_time, WORKING_HOURS_START, WORKING_H
         raise ValueError("Invalid submit date time, try working hours:9-17.")
 
 
-def skip_weekend_if_needed(dueDate, DATETIME_FRIDAY_INTEGER):
+def skip_weekend_if_needed(dueDate):
     if dueDate.weekday() > DATETIME_FRIDAY_INTEGER:
         dueDate = dueDate + timedelta(days=+2)
     return dueDate
