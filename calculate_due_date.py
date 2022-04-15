@@ -13,7 +13,7 @@ def calculate_due_date(submit_date, turnaround_time):
     """
     WORKING_HOURS_START = datetime(1,1,1,9,00).time()
     WORKING_HOURS_END = datetime(1,1,1,17,00).time()
-    WORKDAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
+    AM_12 = datetime(1,1,1,00,00).time()
     WORKING_HOURS_PER_DAY = 8
     DATETIME_FRIDAY_INTEGER = 4
 
@@ -42,7 +42,22 @@ def calculate_due_date(submit_date, turnaround_time):
             dueDate = dueDate + timedelta(days=+2)
         turnaround_time -= WORKING_HOURS_PER_DAY
 
+    # add the rest of the hours to the date
+    dueDate += timedelta(hours=turnaround_time)
+    
+    # if time after workhours, add 1 extra day and extract time difference from hour
+    if dueDate.time() > WORKING_HOURS_END:
+        dueDate += timedelta(days=1, hours=(WORKING_HOURS_START.hour - WORKING_HOURS_END.hour))
+
+    # If we go into next day, but we are before starting work hours, add a day and extract daily working hours
+    if dueDate.time() == AM_12:
+        dueDate += timedelta(days=1, hours=-WORKING_HOURS_PER_DAY)
+
+    # skip weekend if needed
+    if dueDate.weekday() > DATETIME_FRIDAY_INTEGER:
+        dueDate = dueDate + timedelta(days=+2)
+
     return dueDate
 
 if __name__ == "__main__":
-    calculate_due_date(datetime.now(), 1)
+    calculate_due_date(datetime(2022,4,13,15,30),11)

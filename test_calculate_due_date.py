@@ -39,7 +39,7 @@ def test_valid_submit_date_and_turnaround_time_valid_return_type():
 
 # From friday 10:30 to same day 10:30
 def test_valid_0_day():
-    assert calculate_due_date(datetime(2022,4,15,10,30), 2) == datetime(2022,4,15,10,30)
+    assert calculate_due_date(datetime(2022,4,15,10,30), 2) == datetime(2022,4,15,12,30)
 
 # From friday 10:30 to monday 10:30
 def test_valid_friday_to_monday():
@@ -52,3 +52,19 @@ def test_go_to_next_month():
 # From tuesday to friday
 def test_valid_3_day_same_week():
     assert calculate_due_date(datetime(2022,4,12,10,30), 24) == datetime(2022,4,15,10,30)
+
+# From thursday going into next day plus weekend
+def test_valid_17_01():
+    assert calculate_due_date(datetime(2022,4,14,12,1),13) == datetime(2022,4,18,9,1)
+
+# From wednesday into thursday going into AM and setting due date to starting work hours
+def test_valid_16_59():
+    assert calculate_due_date(datetime(2022,4,13,16,59),7) == datetime(2022,4,14,15,59)
+
+# From wednesday into thursday going into AM and setting due date to starting work hours
+def test_valid_17_00():
+    assert calculate_due_date(datetime(2022,4,13,17,0),7) == datetime(2022,4,14,16,00)
+
+# From starting work hours to ending work hours
+def test_valid_full_day():
+    assert calculate_due_date(datetime(2022,4,14,9,0),8) == datetime(2022,4,15,9,0)
