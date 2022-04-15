@@ -25,7 +25,11 @@ def calculate_due_date(submit_date, turnaround_time):
     if not isinstance(turnaround_time, int) or turnaround_time <= 0:
         raise ValueError("Turnaround time is not a valid input, try a positive integer in hours.")
 
-    # return date variable
+    # validate submit date value
+    if submit_date.weekday() > DATETIME_FRIDAY_INTEGER:
+        raise ValueError("Invalid submit date, try weekdays:Mon-Fri, in working hours:9-17.")
+
+    # setup return date variable
     dueDate = submit_date
 
     # while at least a whole working day left, add 1 day to date, and skip weekends if needed
