@@ -2,6 +2,8 @@ from calculate_due_date import calculate_due_date
 from datetime import datetime
 import pytest
 
+# innput validation tests, invalids
+
 def test_invalid_submit_date():
     with pytest.raises(ValueError, match="Submit date is not a valid input, try a datetime.datetime type."):
         calculate_due_date("String_input", 12)
@@ -34,8 +36,12 @@ def test_invalid_submit_date_17_01():
     with pytest.raises(ValueError, match="Invalid submit date time, try working hours:9-17."):
         calculate_due_date(datetime(2022,4,15,17,1), 2)
 
+# input validation test, valid
+
 def test_valid_submit_date_and_turnaround_time_valid_return_type():
     assert isinstance(calculate_due_date(datetime(2022,4,15,10,30), 12), datetime)
+
+# calculation tests
 
 # From friday 10:30 to same day 10:30
 def test_valid_0_day():
