@@ -11,8 +11,8 @@ def calculate_due_date(submit_date, turnaround_time):
     A problem can only be reported during working hours.
     Returns: the date/time when the issue is resolved. 
     """
-    WORKING_HOURS_START = 9
-    WORKING_HOURS_END = 17
+    WORKING_HOURS_START = datetime(1,1,1,9,00).time()
+    WORKING_HOURS_END = datetime(1,1,1,17,00).time()
     WORKDAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
     WORKING_HOURS_PER_DAY = 8
     DATETIME_FRIDAY_INTEGER = 4
@@ -25,9 +25,12 @@ def calculate_due_date(submit_date, turnaround_time):
     if not isinstance(turnaround_time, int) or turnaround_time <= 0:
         raise ValueError("Turnaround time is not a valid input, try a positive integer in hours.")
 
-    # validate submit date value
+    # validate submit date value for weekdays
     if submit_date.weekday() > DATETIME_FRIDAY_INTEGER:
-        raise ValueError("Invalid submit date, try weekdays:Mon-Fri, in working hours:9-17.")
+        raise ValueError("Invalid submit date, try weekdays:Mon-Fri.")
+    #validate submit date value for working hours
+    if submit_date.time() < WORKING_HOURS_START or submit_date.time() > WORKING_HOURS_END:
+        raise ValueError("Invalid submit date time, try working hours:9-17.")
 
     # setup return date variable
     dueDate = submit_date

@@ -23,8 +23,16 @@ def test_invalid_turnaround_time_not_int():
         calculate_due_date(datetime(2022,4,15,10,30), 1.11)
 
 def test_invalid_submit_date_saturday():
-    with pytest.raises(ValueError, match="Invalid submit date, try weekdays:Mon-Fri, in working hours:9-17."):
+    with pytest.raises(ValueError, match="Invalid submit date, try weekdays:Mon-Fri."):
         calculate_due_date(datetime(2022,4,16,10,30), 2)
+
+def test_invalid_submit_date_08_50():
+    with pytest.raises(ValueError, match="Invalid submit date time, try working hours:9-17."):
+        calculate_due_date(datetime(2022,4,15,8,50), 2)
+
+def test_invalid_submit_date_17_01():
+    with pytest.raises(ValueError, match="Invalid submit date time, try working hours:9-17."):
+        calculate_due_date(datetime(2022,4,15,17,1), 2)
 
 def test_valid_submit_date_and_turnaround_time_valid_return_type():
     assert isinstance(calculate_due_date(datetime(2022,4,15,10,30), 12), datetime)
